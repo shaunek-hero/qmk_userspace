@@ -18,7 +18,6 @@
 #define TAPPING_TERM 200
 #define PERMISSIVE_HOLD
 
-// Caps Word wasn't in the Vial config; it's on the outer left thumb.
-// Shifts the next word, then drops back to lowercase on space/punctuation
-// or after this many ms idle.
+// Caps Word shifts the next word,
+// then drops back to lowercase on space/punctuation or after this many ms idle.
 #define CAPS_WORD_IDLE_TIMEOUT 5000
