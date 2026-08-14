@@ -18,7 +18,7 @@ layers:
   - {t: S, h: LALT}
   - {t: D, h: LGUI}
   - {t: F, h: LSFT}
-  - {t: G, h: NUM}
+  - G
   - H
   - {t: J, h: RSFT}
   - {t: K, h: RGUI}
@@ -147,7 +147,7 @@ layers:
   - LALT
   - LGUI
   - LSFT
-  - {t: '=', type: held}
+  - '='
   - +
   - '4'
   - '5'
@@ -166,7 +166,7 @@ layers:
   - '3'
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
+  - {type: held}
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}
   - FN
@@ -190,7 +190,7 @@ layers:
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}
-  - {type: held}
+  - {t: ▽, type: trans}
   - {t: ▽, type: trans}
   - F4
   - F5
@@ -209,7 +209,7 @@ layers:
   - F3
   - F12
   - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
+  - {type: held}
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}
   - {type: held}
