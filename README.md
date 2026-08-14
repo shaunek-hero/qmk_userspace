@@ -3,6 +3,12 @@
 Shaun's QMK keymaps. Currently: `beekeeb/piantor` (42-key Piantor), migrated
 from Vial.
 
+![Keymap](docs/keymap.svg)
+
+Regenerate that diagram with `./draw-keymap.sh` after changing the keymap
+(needs `pipx install keymap-drawer`). It reads `keymap.c` via `qmk c2json`, so
+it can't drift from the real keymap.
+
 ## Local setup
 
 The ARM toolchain is required to build for the Piantor's RP2040:
