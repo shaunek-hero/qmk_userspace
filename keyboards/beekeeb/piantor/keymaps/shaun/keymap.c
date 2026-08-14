@@ -5,6 +5,15 @@
 //     dance, so nothing here needs custom C. Its two former roles live on
 //     layers under the same physical key: Caps Word on _NAV, Caps Lock on
 //     _NUM.
+//
+// Hyper (for aerospace app switching) sits on the right thumb as a one-shot,
+// and on Z and / as ALL_T hold-for-Hyper mod-taps.
+//
+// Watch hold-/ while typing paths: `/` then a left-hand letter is an
+// opposite-hand roll, which PERMISSIVE_HOLD resolves as a hold, so
+// `/Applications` and `/System` can fire Hyper+A and Hyper+S and launch apps
+// rather than merely mistyping. CHORDAL_HOLD does not catch this — it only
+// suppresses same-hand rolls. FLOW_TAP_TERM is the config-only fix if needed.
 #include QMK_KEYBOARD_H
 
 enum layers {
@@ -13,36 +22,6 @@ enum layers {
     _NAV,  // 2
     _NUM,  // 3
     _FN,   // 4 — reached from _NUM via the inner right thumb
-};
-
-// ---------------------------------------------------------------------------
-// Combos — a second and third way to reach Hyper (for aerospace app switching),
-// one per hand, alongside the existing right thumb key.
-//
-// Combos are exempt from CHORDAL_HOLD's opposite-hands rule, so either combo
-// works with a Hyper target on either hand. OSM keeps the one-shot feel: fire
-// the combo, release, then press the target.
-//
-// Both chords are a pinky+index spread on the bottom row rather than adjacent
-// keys, so they take a deliberate press and can't be rolled into by accident.
-// Neither `zv` nor `m/` occurs in ordinary text.
-//
-// Z and / are ALSO hold-for-Hyper mod-taps, as a parallel experiment. Watch
-// for stray Hyper while typing paths: `/` followed by a left-hand letter is an
-// opposite-hand roll, which PERMISSIVE_HOLD resolves as a hold. `/Applications`
-// and `/System` can therefore fire Hyper+A and Hyper+S, which launch apps
-// rather than merely mistyping. FLOW_TAP_TERM is the config-only fix if so.
-// ---------------------------------------------------------------------------
-
-// NOTE: combos match the exact keycode sitting in the keymap, so these must
-// name ALL_T(KC_Z) / ALL_T(KC_SLSH) rather than the bare letters. Using KC_Z
-// here would compile fine and simply never fire.
-const uint16_t PROGMEM combo_z_v[]    = {ALL_T(KC_Z), KC_V, COMBO_END};
-const uint16_t PROGMEM combo_m_slsh[] = {KC_M, ALL_T(KC_SLSH), COMBO_END};
-
-combo_t key_combos[] = {
-    COMBO(combo_z_v, OSM(MOD_HYPR)),
-    COMBO(combo_m_slsh, OSM(MOD_HYPR)),
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {

@@ -32,10 +32,6 @@
 // keyboard.json, correctly for LAYOUT_split_3x6_3 (left 'L', right 'R').
 #define CHORDAL_HOLD
 
-// How close together the two combo keys must be pressed. Lower = fewer
-// accidental fires while typing `./`, but less forgiving when you mean it.
-#define COMBO_TERM 50
-
 // Caps Word shifts the next word,
 // then drops back to lowercase on space/punctuation or after this many ms idle.
 #define CAPS_WORD_IDLE_TIMEOUT 5000
