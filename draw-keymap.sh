@@ -28,7 +28,8 @@ keymap parse -q "$OUT_DIR/keymap.json" \
     -o "$OUT_DIR/keymap.yaml"
 
 echo "==> Drawing..."
-keymap draw "$OUT_DIR/keymap.yaml" -o "$OUT_DIR/keymap.svg"
+keymap -c "$HOME/code/qmk_userspace/keymap-drawer.yaml" \
+    draw "$OUT_DIR/keymap.yaml" -o "$OUT_DIR/keymap.svg"
 
 echo "==> Wrote $OUT_DIR/keymap.svg"
 

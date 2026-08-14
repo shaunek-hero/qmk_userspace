@@ -1,0 +1,7 @@
+# keymap-drawer settings, applied by draw-keymap.sh
+draw_config:
+  # Emit @media (prefers-color-scheme: dark) so the SVG stays legible in both
+  # GitHub themes. Without this the diagram is hardcoded light: the key
+  # rectangles carry their own fill so they survive, but the layer headings
+  # sit on no background and would be dark-on-dark in dark mode.
+  dark_mode: auto
