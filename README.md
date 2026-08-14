@@ -73,14 +73,19 @@ qmk compile -kb beekeeb/piantor -km shaun
 # 6. Commit, flash both halves, and actually type on it before trusting it.
 ```
 
-Breaking changes are not hypothetical — the 0.30 → 0.33 bump alone required
-two keymap fixes:
+Breaking changes are not hypothetical — the 0.30 → 0.33 bump required two
+fixes during the Vial migration:
 
 - `IGNORE_MOD_TAP_INTERRUPT` became the default in 0.21 and now hard-`#error`s
-  if defined.
-- `tap_dance_action_t` lost its `.state` member ([#25415]); custom tap dance
-  code must use `tap_dance_get()` / `tap_dance_get_state()`, which needs
-  `#include "keymap_introspection.h"`.
+  if defined. This one still applies: it's a `config.h` concern.
+- `tap_dance_action_t` lost its `.state` member ([#25415]), so custom tap dance
+  code had to move to `tap_dance_get()` / `tap_dance_get_state()`.
+
+The keymap has since dropped tap dances and combos, so `keymap.c` is now purely
+declarative — no `process_record_user`, no custom callbacks, nothing reaching
+into QMK internals. That's deliberate: the custom C was the only part that had
+ever broken on an upgrade. Keep it that way if you can, and upgrades stay
+boring.
 
 [#25415]: https://github.com/qmk/qmk_firmware/pull/25415
 
