@@ -15,6 +15,27 @@ enum layers {
     _FN,   // 4 — reached from _NUM via the inner right thumb
 };
 
+// ---------------------------------------------------------------------------
+// Combos — a second and third way to reach Hyper (for aerospace app switching),
+// one per hand, alongside the existing right thumb key.
+//
+// Combos are exempt from CHORDAL_HOLD's opposite-hands rule, so either combo
+// works with a Hyper target on either hand. OSM keeps the one-shot feel: fire
+// the combo, release, then press the target.
+//
+// Watch the `.`+`/` one: `./` is a sequence you type often in a shell. If it
+// misfires, the fix is COMBO_MUST_HOLD_PER_COMBO on that combo alone, or a
+// shorter COMBO_TERM.
+// ---------------------------------------------------------------------------
+
+const uint16_t PROGMEM combo_z_x[]     = {KC_Z, KC_X, COMBO_END};
+const uint16_t PROGMEM combo_dot_slsh[] = {KC_DOT, KC_SLSH, COMBO_END};
+
+combo_t key_combos[] = {
+    COMBO(combo_z_x, OSM(MOD_HYPR)),
+    COMBO(combo_dot_slsh, OSM(MOD_HYPR)),
+};
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     // Base: QWERTY with home-row mods (Ctrl/Alt/Gui/Shift, mirrored)
