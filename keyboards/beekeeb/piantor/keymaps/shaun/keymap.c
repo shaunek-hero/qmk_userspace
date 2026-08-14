@@ -26,10 +26,19 @@ enum layers {
 // Both chords are a pinky+index spread on the bottom row rather than adjacent
 // keys, so they take a deliberate press and can't be rolled into by accident.
 // Neither `zv` nor `m/` occurs in ordinary text.
+//
+// Z and / are ALSO hold-for-Hyper mod-taps, as a parallel experiment. Watch
+// for stray Hyper while typing paths: `/` followed by a left-hand letter is an
+// opposite-hand roll, which PERMISSIVE_HOLD resolves as a hold. `/Applications`
+// and `/System` can therefore fire Hyper+A and Hyper+S, which launch apps
+// rather than merely mistyping. FLOW_TAP_TERM is the config-only fix if so.
 // ---------------------------------------------------------------------------
 
-const uint16_t PROGMEM combo_z_v[]    = {KC_Z, KC_V, COMBO_END};
-const uint16_t PROGMEM combo_m_slsh[] = {KC_M, KC_SLSH, COMBO_END};
+// NOTE: combos match the exact keycode sitting in the keymap, so these must
+// name ALL_T(KC_Z) / ALL_T(KC_SLSH) rather than the bare letters. Using KC_Z
+// here would compile fine and simply never fire.
+const uint16_t PROGMEM combo_z_v[]    = {ALL_T(KC_Z), KC_V, COMBO_END};
+const uint16_t PROGMEM combo_m_slsh[] = {KC_M, ALL_T(KC_SLSH), COMBO_END};
 
 combo_t key_combos[] = {
     COMBO(combo_z_v, OSM(MOD_HYPR)),
@@ -44,8 +53,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                                                                  KC_Y,         KC_U,         KC_I,         KC_O,         KC_P,            KC_BSPC,
         KC_ESC,  LCTL_T(KC_A), LALT_T(KC_S), LGUI_T(KC_D), LSFT_T(KC_F), LT(_NUM, KC_G),
                                                                                  KC_H,         RSFT_T(KC_J), RGUI_T(KC_K), RALT_T(KC_L), RCTL_T(KC_SCLN), KC_QUOT,
-        KC_UNDS, KC_Z,         KC_X,         KC_C,         KC_V,         KC_B,
-                                                                                 KC_N,         KC_M,         KC_COMM,      KC_DOT,       KC_SLSH,         KC_MINS,
+        KC_UNDS, ALL_T(KC_Z),  KC_X,         KC_C,         KC_V,         KC_B,
+                                                                                 KC_N,         KC_M,         KC_COMM,      KC_DOT,       ALL_T(KC_SLSH),  KC_MINS,
                                MO(_NUM),     MO(_NUM),     MO(_NAV),
                                                                                  LT(_SYM, KC_ENT), LT(_NUM, KC_SPC), OSM(MOD_HYPR)
     ),
