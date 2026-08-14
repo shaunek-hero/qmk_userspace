@@ -23,17 +23,17 @@ enum layers {
 // works with a Hyper target on either hand. OSM keeps the one-shot feel: fire
 // the combo, release, then press the target.
 //
-// Watch the `.`+`/` one: `./` is a sequence you type often in a shell. If it
-// misfires, the fix is COMBO_MUST_HOLD_PER_COMBO on that combo alone, or a
-// shorter COMBO_TERM.
+// Both chords are a pinky+index spread on the bottom row rather than adjacent
+// keys, so they take a deliberate press and can't be rolled into by accident.
+// Neither `zv` nor `m/` occurs in ordinary text.
 // ---------------------------------------------------------------------------
 
-const uint16_t PROGMEM combo_z_x[]     = {KC_Z, KC_X, COMBO_END};
-const uint16_t PROGMEM combo_dot_slsh[] = {KC_DOT, KC_SLSH, COMBO_END};
+const uint16_t PROGMEM combo_z_v[]    = {KC_Z, KC_V, COMBO_END};
+const uint16_t PROGMEM combo_m_slsh[] = {KC_M, KC_SLSH, COMBO_END};
 
 combo_t key_combos[] = {
-    COMBO(combo_z_x, OSM(MOD_HYPR)),
-    COMBO(combo_dot_slsh, OSM(MOD_HYPR)),
+    COMBO(combo_z_v, OSM(MOD_HYPR)),
+    COMBO(combo_m_slsh, OSM(MOD_HYPR)),
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
