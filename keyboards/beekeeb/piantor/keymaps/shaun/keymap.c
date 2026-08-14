@@ -24,6 +24,27 @@ enum layers {
     _FN,   // 4 — reached from _NUM via the inner right thumb
 };
 
+// Turn Flow Tap off for the two Shifts, leaving it at FLOW_TAP_TERM for
+// everything else.
+//
+// Capitalising mid-sentence is inherently a fast roll: Shift lands within the
+// flow term of the previous letter, so Flow Tap forced the tap and `I` came out
+// as `fi`, `?` as `f/`. Shift is also the safest mod to exempt — a stray Shift
+// is a capital letter, whereas a stray Gui or Ctrl fires a shortcut. CHORDAL_HOLD
+// still suppresses same-hand rolls on these keys.
+uint16_t get_flow_tap_term(uint16_t keycode, keyrecord_t *record, uint16_t prev_keycode) {
+    if (is_flow_tap_key(keycode) && is_flow_tap_key(prev_keycode)) {
+        switch (keycode) {
+            case LSFT_T(KC_F):
+            case RSFT_T(KC_J):
+                return 0;  // never suppress Shift
+            default:
+                return FLOW_TAP_TERM;
+        }
+    }
+    return 0;
+}
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     // Base: QWERTY with home-row mods (Ctrl/Alt/Gui/Shift, mirrored)

@@ -38,10 +38,12 @@
 // `/` in `/Applications` followed by `A`, which PERMISSIVE_HOLD would
 // otherwise resolve as a hold and fire Hyper+A.
 //
-// No callbacks needed: the default is_flow_tap_key() already covers KC_A-KC_Z
-// and KC_SLSH, so z, / and every home row mod are in scope.
+// The default is_flow_tap_key() covers KC_A-KC_Z and KC_SLSH, so z, / and
+// every home row mod are in scope. The two Shifts are then exempted again in
+// keymap.c via get_flow_tap_term(), because capitalising mid-sentence is
+// always a fast roll and was turning `I` into `fi`.
 //
-// The trade: mid-flow mod chords no longer work. Ctrl+C while typing fast
+// The trade: mid-flow mod chords no longer work. Cmd+C while typing fast
 // wants a brief pause first. 150 ms is QMK's suggested starting point; lower
 // it if it feels obstructive, raise it if stray mods still get through.
 #define FLOW_TAP_TERM 150
