@@ -32,6 +32,20 @@
 // keyboard.json, correctly for LAYOUT_split_3x6_3 (left 'L', right 'R').
 #define CHORDAL_HOLD
 
+// Flow Tap: if a tap-hold key is pressed within this many ms of the previous
+// key, force the tap. In effect it switches mod-taps off during fast typing,
+// which is the case CHORDAL_HOLD can't cover — an opposite-hand roll like the
+// `/` in `/Applications` followed by `A`, which PERMISSIVE_HOLD would
+// otherwise resolve as a hold and fire Hyper+A.
+//
+// No callbacks needed: the default is_flow_tap_key() already covers KC_A-KC_Z
+// and KC_SLSH, so z, / and every home row mod are in scope.
+//
+// The trade: mid-flow mod chords no longer work. Ctrl+C while typing fast
+// wants a brief pause first. 150 ms is QMK's suggested starting point; lower
+// it if it feels obstructive, raise it if stray mods still get through.
+#define FLOW_TAP_TERM 150
+
 // Caps Word shifts the next word,
 // then drops back to lowercase on space/punctuation or after this many ms idle.
 #define CAPS_WORD_IDLE_TIMEOUT 5000
