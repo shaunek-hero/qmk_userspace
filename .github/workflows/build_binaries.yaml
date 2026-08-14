@@ -11,7 +11,9 @@ jobs:
     uses: qmk/.github/.github/workflows/qmk_userspace_build.yml@main
     with:
       qmk_repo: qmk/qmk_firmware
-      qmk_ref: master
+      # Pinned so CI builds the same QMK the keymap was last verified against.
+      # Bump deliberately -- see "Updating QMK" in README.md.
+      qmk_ref: 0.33.13
 
   publish:
     name: 'QMK Userspace Publish'
