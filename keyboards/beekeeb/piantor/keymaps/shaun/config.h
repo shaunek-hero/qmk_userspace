@@ -18,6 +18,20 @@
 #define TAPPING_TERM 200
 #define PERMISSIVE_HOLD
 
+// Home row mods: settle a mod-tap as *tapped* when the next key is on the same
+// hand, which is what kills accidental mods during fast rolls. Pairs with
+// PERMISSIVE_HOLD, which governs the opposite-hands case.
+//
+// Two things to know:
+//   - It has no effect after TAPPING_TERM, so deliberately holding a mod past
+//     200 ms still gives a same-hand chord.
+//   - Same-hand shortcuts (Cmd+C is D and C, both left) now want the mirrored
+//     mod instead: hold RGUI_T(KC_K) on the right, press C on the left.
+//
+// Handedness needs no table here — QMK derives it from the split geometry in
+// keyboard.json, correctly for LAYOUT_split_3x6_3 (left 'L', right 'R').
+#define CHORDAL_HOLD
+
 // Caps Word shifts the next word,
 // then drops back to lowercase on space/punctuation or after this many ms idle.
 #define CAPS_WORD_IDLE_TIMEOUT 5000

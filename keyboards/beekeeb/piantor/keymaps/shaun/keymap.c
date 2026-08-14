@@ -8,12 +8,10 @@
 
 enum layers {
     _BASE = 0,
-    _UNUSED1,  // empty in Vial; kept so the layers below keep their original indices
-    _UNUSED2,
-    _SYM,      // 3
-    _NAV,      // 4
-    _NUM,      // 5
-    _FN,       // 6 — reached from _NUM via the inner right thumb
+    _SYM,  // 1
+    _NAV,  // 2
+    _NUM,  // 3
+    _FN,   // 4 — reached from _NUM via the inner right thumb
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -28,20 +26,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                                                                  KC_N,         KC_M,         KC_COMM,      KC_DOT,       KC_SLSH,         KC_MINS,
                                CW_TOGG,      MO(_NUM),     MO(_NAV),
                                                                                  LT(_SYM, KC_ENT), LT(_NUM, KC_SPC), OSM(MOD_HYPR)
-    ),
-
-    [_UNUSED1] = LAYOUT_split_3x6_3(
-        _______, _______, _______, _______, _______, _______,    _______, _______, _______, _______, _______, _______,
-        _______, _______, _______, _______, _______, _______,    _______, _______, _______, _______, _______, _______,
-        _______, _______, _______, _______, _______, _______,    _______, _______, _______, _______, _______, _______,
-                          _______, _______, _______,             _______, _______, _______
-    ),
-
-    [_UNUSED2] = LAYOUT_split_3x6_3(
-        _______, _______, _______, _______, _______, _______,    _______, _______, _______, _______, _______, _______,
-        _______, _______, _______, _______, _______, _______,    _______, _______, _______, _______, _______, _______,
-        _______, _______, _______, _______, _______, _______,    _______, _______, _______, _______, _______, _______,
-                          _______, _______, _______,             _______, _______, _______
     ),
 
     // Symbols — held via the inner right thumb
