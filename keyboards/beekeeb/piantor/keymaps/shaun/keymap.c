@@ -7,13 +7,23 @@
 //     _NUM.
 //
 // Hyper (for aerospace app switching) sits on the right thumb as a one-shot,
-// and on Z and / as ALL_T hold-for-Hyper mod-taps.
+// and on the two outer home-row keys, Esc and ', as ALL_T hold-for-Hyper
+// mod-taps — one per hand, so there is always an opposite-hand route to any
+// Hyper target. CHORDAL_HOLD would otherwise block same-hand ones.
 //
-// Watch hold-/ while typing paths: `/` then a left-hand letter is an
-// opposite-hand roll, which PERMISSIVE_HOLD resolves as a hold, so
-// `/Applications` and `/System` can fire Hyper+A and Hyper+S and launch apps
-// rather than merely mistyping. CHORDAL_HOLD does not catch this — it only
-// suppresses same-hand rolls. FLOW_TAP_TERM is the config-only fix if needed.
+// Note that neither key gets Flow Tap protection: QMK's default
+// is_flow_tap_key() matches KC_A-KC_Z, KC_DOT, KC_COMM, KC_SCLN, KC_SLSH and
+// KC_SPC, so KC_QUOT and KC_ESC fall outside it. That is deliberate for now —
+// trying the mod-taps unguarded to see whether the risk is real in practice.
+//
+// The case to watch is hold-' in contractions: `'` then a left-hand letter is
+// an opposite-hand roll, which CHORDAL_HOLD lets through and PERMISSIVE_HOLD
+// can resolve as a hold, so `don't` may fire Hyper+T and launch an app. It
+// needs a nested press (' down, t down, t up, ' up) rather than a plain roll,
+// so it should be occasional rather than constant.
+//
+// If it does misfire, the fix is to override is_flow_tap_key() and add
+// KC_QUOT (and optionally KC_ESC) to the default set.
 #include QMK_KEYBOARD_H
 
 enum layers {
@@ -51,10 +61,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_BASE] = LAYOUT_split_3x6_3(
         KC_TAB,  KC_Q,         KC_W,         KC_E,         KC_R,         KC_T,
                                                                                  KC_Y,         KC_U,         KC_I,         KC_O,         KC_P,            KC_BSPC,
-        KC_ESC,  LCTL_T(KC_A), LALT_T(KC_S), LGUI_T(KC_D), LSFT_T(KC_F), KC_G,
-                                                                                 KC_H,         RSFT_T(KC_J), RGUI_T(KC_K), RALT_T(KC_L), RCTL_T(KC_SCLN), KC_QUOT,
-        KC_UNDS, ALL_T(KC_Z),  KC_X,         KC_C,         KC_V,         KC_B,
-                                                                                 KC_N,         KC_M,         KC_COMM,      KC_DOT,       ALL_T(KC_SLSH),  KC_MINS,
+        ALL_T(KC_ESC), LCTL_T(KC_A), LALT_T(KC_S), LGUI_T(KC_D), LSFT_T(KC_F), KC_G,
+                                                                                 KC_H,         RSFT_T(KC_J), RGUI_T(KC_K), RALT_T(KC_L), RCTL_T(KC_SCLN), ALL_T(KC_QUOT),
+        KC_UNDS, KC_Z,         KC_X,         KC_C,         KC_V,         KC_B,
+                                                                                 KC_N,         KC_M,         KC_COMM,      KC_DOT,       KC_SLSH,         KC_MINS,
                                MO(_NUM),     MO(_NUM),     MO(_NAV),
                                                                                  LT(_SYM, KC_ENT), LT(_NUM, KC_SPC), OSM(MOD_HYPR)
     ),

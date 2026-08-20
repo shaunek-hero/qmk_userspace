@@ -13,7 +13,7 @@ layers:
   - O
   - P
   - BSPC
-  - ESC
+  - {t: ESC, h: ALL}
   - {t: A, h: LCTL}
   - {t: S, h: LALT}
   - {t: D, h: LGUI}
@@ -24,9 +24,9 @@ layers:
   - {t: K, h: RGUI}
   - {t: L, h: RALT}
   - {t: ;, h: RCTL}
-  - ''''
+  - {t: '''', h: ALL}
   - _
-  - {t: Z, h: ALL}
+  - Z
   - X
   - C
   - V
@@ -35,7 +35,7 @@ layers:
   - M
   - ','
   - .
-  - {t: /, h: ALL}
+  - /
   - '-'
   - NUM
   - NUM
