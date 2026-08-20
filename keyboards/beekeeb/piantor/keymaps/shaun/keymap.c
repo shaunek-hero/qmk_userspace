@@ -78,7 +78,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     // Number pad. The `/` slot is transparent on purpose so it falls through to
     // KC_SLSH on the base layer; _FN puts F12 there instead.
     [_NUM] = LAYOUT_split_3x6_3(
-        _______, _______, _______, _______, _______, _______,    KC_EQL,  KC_7, KC_8, KC_9, KC_ASTR, _______,
+        _______, KC_1,    KC_2,    KC_3,    KC_4,    KC_5,       KC_6,    KC_7, KC_8, KC_9, KC_0,    _______,
         KC_CAPS, KC_LCTL, KC_LALT, KC_LGUI, KC_LSFT, KC_EQL,     KC_PLUS, KC_4, KC_5, KC_6, KC_0,    _______,
         _______, _______, _______, _______, _______, _______,    KC_MINS, KC_1, KC_2, KC_3, _______, _______,
                           _______, _______, _______,             MO(_FN), _______, KC_P0
