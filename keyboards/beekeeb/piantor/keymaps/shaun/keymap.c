@@ -78,10 +78,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
 
     // Nav / media / clipboard — held via the inner left thumb
+    //
+    // Browser back/forward sit over Y and O as Cmd+[ / Cmd+], not QMK's
+    // KC_WWW_BACK / KC_WWW_FORWARD because I'm primarily on macos
     [_NAV] = LAYOUT_split_3x6_3(
-        SGUI(KC_W), KC_MUTE,    KC_MRWD,    KC_MFFD,    KC_MPLY,    KC_VOLU,    _______, _______, _______, _______, _______, _______,
-        _______,    KC_LCTL,    KC_LALT,    KC_LGUI,    KC_LSFT,    KC_VOLD,    KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT, _______, _______,
-        _______,    LGUI(KC_Z), LGUI(KC_X), LGUI(KC_C), LGUI(KC_V), LGUI(KC_Y), KC_HOME, KC_PGDN, KC_PGUP, KC_END,  _______, _______,
+        SGUI(KC_W), KC_MUTE,    KC_MRWD,    KC_MFFD,    KC_MPLY,    KC_VOLU,    LGUI(KC_LBRC), _______, _______, LGUI(KC_RBRC), _______, _______,
+        _______,    KC_LCTL,    KC_LALT,    KC_LGUI,    KC_LSFT,    KC_VOLD,    KC_LEFT,       KC_DOWN, KC_UP,   KC_RGHT,       _______, _______,
+        _______,    LGUI(KC_Z), LGUI(KC_X), LGUI(KC_C), LGUI(KC_V), LGUI(KC_Y), KC_HOME,       KC_PGDN, KC_PGUP, KC_END,        _______, _______,
                                 LCG(KC_Q),  _______,    _______,                _______, _______, _______
     ),
 
