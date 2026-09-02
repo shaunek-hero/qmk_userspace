@@ -1,0 +1,18 @@
+# keymap-drawer settings for the desktop wallpaper rendering, applied by
+# draw-keymap.sh. Separate from keymap-drawer.yaml because the wallpaper wants
+# a different shape and a fixed theme than the docs SVG does.
+draw_config:
+  # Two columns instead of one. The docs SVG stacks all five layers vertically,
+  # which is right for scrolling a README but gives an 844x1680 image -- on a
+  # 16:9 desktop that is mostly empty space either side. Two columns lays the
+  # five layers out 2/2/1 for roughly 1688x1036, which very nearly matches a
+  # 2560x1440 screen.
+  n_columns: 2
+
+  # Fixed dark, not `auto`. `auto` emits a prefers-color-scheme media query,
+  # which is meaningless once the SVG has been flattened into a PNG -- the
+  # rasteriser picks one and it may not be the one you wanted. Setting it
+  # outright emits the dark palette unconditionally, so the output is
+  # deterministic. Keys come out #3f4750 with #d1d6db legends; see WALL_BG in
+  # draw-keymap.sh for the ground they sit on.
+  dark_mode: true
