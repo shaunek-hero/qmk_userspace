@@ -55,6 +55,37 @@ uint16_t get_flow_tap_term(uint16_t keycode, keyrecord_t *record, uint16_t prev_
     return 0;
 }
 
+// Let the thumb layer keys chord with their own hand.
+//
+// CHORDAL_HOLD settles a tap-hold as *tapped* when the next key is on the same
+// hand, which is exactly what protects the home row mods. Applied to a thumb
+// layer key it is actively wrong. _SYM is reachable only through
+// LT(_SYM, KC_ENT), and QMK's generated handedness map puts the thumbs at
+// L L L R R R -- so that key is plain 'R' with no exemption, every right-hand
+// symbol was a same-hand chord, and it settled as a tap: `*` (I) and `+` (H)
+// came out as Return followed by the base letter. It only bites inside
+// TAPPING_TERM, which is why holding the thumb deliberately always worked and
+// fast rolls did not.
+//
+// LT(_NUM, KC_SPC) is on the same thumb and has the same flaw -- the right-hand
+// digits would emit a space -- but MO(_NUM) on the left thumbs is an
+// opposite-hand route that masks it.
+//
+// QMK's docs suggest '*' handedness for exactly this case (docs/tap_hold.md).
+// Overriding per-chord rather than per-key keeps this in terms of keycodes
+// instead of matrix positions, which the docs warn are irregular around thumb
+// clusters. Everything else falls through to the default, so the home row mods
+// keep their same-hand protection.
+bool get_chordal_hold(uint16_t tap_hold_keycode, keyrecord_t *tap_hold_record,
+                      uint16_t other_keycode, keyrecord_t *other_record) {
+    switch (tap_hold_keycode) {
+        case LT(_SYM, KC_ENT):
+        case LT(_NUM, KC_SPC):
+            return true;
+    }
+    return get_chordal_hold_default(tap_hold_record, other_record);
+}
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     // Base: QWERTY with home-row mods (Ctrl/Alt/Gui/Shift, mirrored)

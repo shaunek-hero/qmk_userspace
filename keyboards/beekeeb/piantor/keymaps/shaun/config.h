@@ -30,6 +30,10 @@
 //
 // Handedness needs no table here — QMK derives it from the split geometry in
 // keyboard.json, correctly for LAYOUT_split_3x6_3 (left 'L', right 'R').
+//
+// The thumbs come out of that derivation as L L L R R R, which is wrong for
+// the two thumb layer-taps — see get_chordal_hold() in keymap.c, which exempts
+// them so same-hand chords like SYM+I (`*`) work.
 #define CHORDAL_HOLD
 
 // Flow Tap: if a tap-hold key is pressed within this many ms of the previous
