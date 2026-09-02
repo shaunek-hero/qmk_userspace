@@ -89,7 +89,7 @@ uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
 // fast rolls did not.
 //
 // LT(_NUM, KC_SPC) is on the same thumb and has the same flaw -- the right-hand
-// digits would emit a space -- but MO(_NUM) on the left thumbs is an
+// digits would emit a space -- but MO(_NUM) on the left outer thumb is an
 // opposite-hand route that masks it.
 //
 // QMK's docs suggest '*' handedness for exactly this case (docs/tap_hold.md).
@@ -117,7 +117,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                                                                  KC_H,         RSFT_T(KC_J), RGUI_T(KC_K), RALT_T(KC_L), RCTL_T(KC_SCLN), ALL_T(KC_QUOT),
         KC_UNDS, KC_Z,         KC_X,         KC_C,         KC_V,         KC_B,
                                                                                  KC_N,         KC_M,         KC_COMM,      KC_DOT,       KC_SLSH,         KC_MINS,
-                               MO(_NUM),     MO(_NUM),     MO(_NAV),
+                               MO(_NUM),     KC_LSFT,      MO(_NAV),
                                                                                  LT(_SYM, KC_ENT), LT(_NUM, KC_SPC), OSM(MOD_HYPR)
     ),
 
