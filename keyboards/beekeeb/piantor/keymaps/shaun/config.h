@@ -11,12 +11,26 @@
 //
 //   "Tapping Force Hold" (unchecked) — replaced by QUICK_TAP_TERM, which
 //       defaults to TAPPING_TERM. Enabling the old option == QUICK_TAP_TERM 0,
-//       so leaving it undefined reproduces the unchecked box.
+//       so leaving it undefined reproduces the unchecked box. That is still the
+//       global default here, but the two thumb layer-taps now opt out per-key —
+//       see QUICK_TAP_TERM_PER_KEY below.
 //
 // "Retro Tapping" was unchecked, and RETRO_TAPPING is off by default.
 
 #define TAPPING_TERM 200
 #define PERMISSIVE_HOLD
+
+// Quick tap: after tapping a dual-role key, pressing it again within
+// QUICK_TAP_TERM repeats the *tap* keycode instead of engaging the hold, so a
+// mod-tap can still auto-repeat its letter. QMK defaults it to TAPPING_TERM
+// (and silently clamps anything larger, action_tapping.h:26), so it is 200 ms.
+//
+// That is worth keeping on the home row — tap `a`, hold `a`, get `aaaa` — but
+// it is pure downside on the thumb layer-taps, where the tap keycodes are Enter
+// and Space. Typing a space and then reaching for a digit within 200 ms
+// auto-repeated the space instead of engaging _NUM. See get_quick_tap_term()
+// in keymap.c, which returns 0 for those two keys only.
+#define QUICK_TAP_TERM_PER_KEY
 
 // Home row mods: settle a mod-tap as *tapped* when the next key is on the same
 // hand, which is what kills accidental mods during fast rolls. Pairs with

@@ -55,6 +55,27 @@ uint16_t get_flow_tap_term(uint16_t keycode, keyrecord_t *record, uint16_t prev_
     return 0;
 }
 
+// No auto-repeat on the thumb layer keys.
+//
+// Quick tap exists so a mod-tap can repeat its letter: tap `a`, press and hold
+// it again inside QUICK_TAP_TERM, get `aaaa` rather than Ctrl. Worth keeping on
+// the home row. On the thumbs the tap keycodes are Enter and Space, which are
+// not keys worth auto-repeating that way, and the cost is real — tapping Space
+// and then reaching for a digit within 200 ms repeated the space instead of
+// engaging _NUM, because quick tap fires before the layer ever comes up.
+//
+// It only triggers when the immediately preceding action was an uninterrupted
+// tap of this same key (action_tapping.c:604), which is why it showed up after
+// Space and not mid-word.
+uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case LT(_SYM, KC_ENT):
+        case LT(_NUM, KC_SPC):
+            return 0;
+    }
+    return QUICK_TAP_TERM;
+}
+
 // Let the thumb layer keys chord with their own hand.
 //
 // CHORDAL_HOLD settles a tap-hold as *tapped* when the next key is on the same
