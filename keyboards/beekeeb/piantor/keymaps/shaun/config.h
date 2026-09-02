@@ -27,9 +27,9 @@
 //
 // That is worth keeping on the home row — tap `a`, hold `a`, get `aaaa` — but
 // it is pure downside on the thumb layer-taps, where the tap keycodes are Enter
-// and Space. Typing a space and then reaching for a digit within 200 ms
-// auto-repeated the space instead of engaging _NUM. See get_quick_tap_term()
-// in keymap.c, which returns 0 for those two keys only.
+// and Space. Typing a space and then reaching for a key on its layer within
+// 200 ms auto-repeated the space instead. See get_quick_tap_term() in
+// keymap.c, which returns 0 for those two keys only.
 #define QUICK_TAP_TERM_PER_KEY
 
 // Home row mods: settle a mod-tap as *tapped* when the next key is on the same

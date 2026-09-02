@@ -40,8 +40,8 @@ layers:
   - NUM
   - LSFT
   - NAV
-  - {t: ENT, h: SYM}
-  - {t: SPC, h: NUM}
+  - {t: ENT, h: NUM}
+  - {t: SPC, h: SYM}
   - {t: HYPR, h: sticky}
   SYM:
   - {t: ▽, type: trans}
@@ -83,8 +83,8 @@ layers:
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}
-  - {type: held}
   - {t: ▽, type: trans}
+  - {type: held}
   - {t: ▽, type: trans}
   NAV:
   - Sft+Gui+W
@@ -169,7 +169,7 @@ layers:
   - {type: held}
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}
-  - FN
+  - {t: ▽, type: trans}
   - {t: ▽, type: trans}
   - P0
   FN:
@@ -209,9 +209,11 @@ layers:
   - F3
   - F12
   - {t: ▽, type: trans}
-  - {type: held}
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}
-  - {type: held}
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+combos:
+  - {p: [38, 39], k: FN, l: [BASE], a: bottom}

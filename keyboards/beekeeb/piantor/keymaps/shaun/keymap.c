@@ -31,7 +31,7 @@ enum layers {
     _SYM,  // 1
     _NAV,  // 2
     _NUM,  // 3
-    _FN,   // 4 — reached from _NUM via the inner right thumb
+    _FN,   // 4 — tri-layer: _NAV + _NUM, i.e. both inner thumbs
 };
 
 // Turn Flow Tap off for the two Shifts, leaving it at FLOW_TAP_TERM for
@@ -61,16 +61,16 @@ uint16_t get_flow_tap_term(uint16_t keycode, keyrecord_t *record, uint16_t prev_
 // it again inside QUICK_TAP_TERM, get `aaaa` rather than Ctrl. Worth keeping on
 // the home row. On the thumbs the tap keycodes are Enter and Space, which are
 // not keys worth auto-repeating that way, and the cost is real — tapping Space
-// and then reaching for a digit within 200 ms repeated the space instead of
-// engaging _NUM, because quick tap fires before the layer ever comes up.
+// and then reaching for a key on its layer within 200 ms repeated the space
+// instead, because quick tap fires before the layer ever comes up.
 //
 // It only triggers when the immediately preceding action was an uninterrupted
 // tap of this same key (action_tapping.c:604), which is why it showed up after
 // Space and not mid-word.
 uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
-        case LT(_SYM, KC_ENT):
-        case LT(_NUM, KC_SPC):
+        case LT(_NUM, KC_ENT):
+        case LT(_SYM, KC_SPC):
             return 0;
     }
     return QUICK_TAP_TERM;
@@ -81,16 +81,16 @@ uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
 // CHORDAL_HOLD settles a tap-hold as *tapped* when the next key is on the same
 // hand, which is exactly what protects the home row mods. Applied to a thumb
 // layer key it is actively wrong. _SYM is reachable only through
-// LT(_SYM, KC_ENT), and QMK's generated handedness map puts the thumbs at
+// LT(_SYM, KC_SPC), and QMK's generated handedness map puts the thumbs at
 // L L L R R R -- so that key is plain 'R' with no exemption, every right-hand
 // symbol was a same-hand chord, and it settled as a tap: `*` (I) and `+` (H)
-// came out as Return followed by the base letter. It only bites inside
+// came out as Space followed by the base letter. It only bites inside
 // TAPPING_TERM, which is why holding the thumb deliberately always worked and
 // fast rolls did not.
 //
-// LT(_NUM, KC_SPC) is on the same thumb and has the same flaw -- the right-hand
-// digits would emit a space -- but MO(_NUM) on the left outer thumb is an
-// opposite-hand route that masks it.
+// LT(_NUM, KC_ENT) is on the neighbouring thumb and has the same flaw -- the
+// right-hand digits would emit a Return -- but MO(_NUM) on the left outer thumb
+// is an opposite-hand route that masks it.
 //
 // QMK's docs suggest '*' handedness for exactly this case (docs/tap_hold.md).
 // Overriding per-chord rather than per-key keeps this in terms of keycodes
@@ -100,11 +100,25 @@ uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
 bool get_chordal_hold(uint16_t tap_hold_keycode, keyrecord_t *tap_hold_record,
                       uint16_t other_keycode, keyrecord_t *other_record) {
     switch (tap_hold_keycode) {
-        case LT(_SYM, KC_ENT):
-        case LT(_NUM, KC_SPC):
+        case LT(_NUM, KC_ENT):
+        case LT(_SYM, KC_SPC):
             return true;
     }
     return get_chordal_hold_default(tap_hold_record, other_record);
+}
+
+// _FN is a tri-layer: hold both inner thumbs.
+//
+// The left inner thumb is MO(_NAV) and the right inner thumb is
+// LT(_NUM, KC_ENT), so holding the pair turns on _NAV and _NUM together and
+// update_tri_layer_state() lights _FN on top of them. _NAV leaves the right
+// inner thumb transparent and _NUM leaves the left one transparent, so each
+// still reaches the other and the order of the two presses does not matter.
+//
+// _FN is the highest layer number, so its keys win over the _NAV and _NUM
+// definitions underneath while all three are on.
+layer_state_t layer_state_set_user(layer_state_t state) {
+    return update_tri_layer_state(state, _NAV, _NUM, _FN);
 }
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -118,10 +132,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_UNDS, KC_Z,         KC_X,         KC_C,         KC_V,         KC_B,
                                                                                  KC_N,         KC_M,         KC_COMM,      KC_DOT,       KC_SLSH,         KC_MINS,
                                MO(_NUM),     KC_LSFT,      MO(_NAV),
-                                                                                 LT(_SYM, KC_ENT), LT(_NUM, KC_SPC), OSM(MOD_HYPR)
+                                                                                 LT(_NUM, KC_ENT), LT(_SYM, KC_SPC), OSM(MOD_HYPR)
     ),
 
-    // Symbols — held via the inner right thumb
+    // Symbols — held via the middle right thumb
     [_SYM] = LAYOUT_split_3x6_3(
         _______, KC_EXLM, KC_AT,   KC_HASH, KC_DLR,  KC_PERC,    KC_CIRC, KC_AMPR, KC_ASTR, KC_LPRN, KC_RPRN, _______,
         CW_TOGG, KC_TILD, KC_LCBR, KC_LPRN, KC_LBRC, KC_EQL,     KC_PLUS, KC_RBRC, KC_RPRN, KC_RCBR, KC_PIPE, KC_BSLS,
@@ -146,11 +160,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______, KC_1,    KC_2,    KC_3,    KC_4,    KC_5,       KC_6,    KC_7, KC_8, KC_9, KC_0,    _______,
         KC_CAPS, KC_LCTL, KC_LALT, KC_LGUI, KC_LSFT, KC_EQL,     KC_PLUS, KC_4, KC_5, KC_6, KC_0,    _______,
         _______, _______, _______, _______, _______, _______,    KC_MINS, KC_1, KC_2, KC_3, _______, _______,
-                          _______, _______, _______,             MO(_FN), _______, KC_P0
+                          _______, _______, _______,             _______, _______, KC_P0
     ),
 
     // F-keys, laid out over the same positions as the number pad.
-    // Reached by holding _NUM, then the inner right thumb.
+    // Reached by holding both inner thumbs (see layer_state_set_user above).
     [_FN] = LAYOUT_split_3x6_3(
         _______, _______, _______, _______, _______, _______,    _______, KC_F7, KC_F8, KC_F9, KC_F10, _______,
         _______, _______, _______, _______, _______, _______,    _______, KC_F4, KC_F5, KC_F6, KC_F11, _______,

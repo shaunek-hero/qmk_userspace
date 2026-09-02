@@ -27,6 +27,16 @@ keymap parse -q "$OUT_DIR/keymap.json" \
     -l BASE SYM NAV NUM FN \
     -o "$OUT_DIR/keymap.yaml"
 
+# The _FN layer is a tri-layer (hold both inner thumbs), which lives in
+# layer_state_set_user() rather than in the keymap array, so nothing in the
+# parsed JSON points at it. Draw it as a combo on the two inner thumb keys --
+# positions 38 and 39 of the 42-key split_3x6_3 layout -- so the diagram still
+# shows how FN is reached.
+cat >> "$OUT_DIR/keymap.yaml" <<'YAML'
+combos:
+  - {p: [38, 39], k: FN, l: [BASE], a: bottom}
+YAML
+
 echo "==> Drawing..."
 keymap -c "$HOME/code/qmk_userspace/keymap-drawer.yaml" \
     draw "$OUT_DIR/keymap.yaml" -o "$OUT_DIR/keymap.svg"
