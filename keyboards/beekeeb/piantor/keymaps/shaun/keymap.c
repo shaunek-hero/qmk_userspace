@@ -2,9 +2,16 @@
 //
 // Deliberate deviations from the .vil:
 //   - The Esc key is plain KC_ESC rather than a tap-Esc/hold-CapsLock tap
-//     dance, so nothing here needs custom C. Its two former roles live on
-//     layers under the same physical key: Caps Word on _NAV, Caps Lock on
-//     _NUM.
+//     dance, so nothing here needs custom C. Caps Word lives on layers under
+//     that same physical key.
+//
+//     It is deliberately on all three of _SYM, _NAV and _NUM at once, which
+//     is redundant: the point is to find out which layer the thumb reaches
+//     for in practice, rather than to guess. Once one of them wins, the other
+//     two should go.
+//
+//     Caps Lock is no longer bound anywhere as a result -- it used to sit
+//     here on _NUM. Nothing needed it, but it is worth knowing it is gone.
 //
 // Hyper (for aerospace app switching) sits on the right thumb as a one-shot,
 // and on the two outer home-row keys, Esc and ', as ALL_T hold-for-Hyper
@@ -154,7 +161,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     // KC_WWW_BACK / KC_WWW_FORWARD because I'm primarily on macos
     [_NAV] = LAYOUT_split_3x6_3(
         SGUI(KC_W), KC_MUTE,    KC_MRWD,    KC_MFFD,    KC_MPLY,    KC_VOLU,    LGUI(KC_LBRC), _______, _______, LGUI(KC_RBRC), _______, _______,
-        _______,    KC_LCTL,    KC_LALT,    KC_LGUI,    KC_LSFT,    KC_VOLD,    KC_LEFT,       KC_DOWN, KC_UP,   KC_RGHT,       _______, _______,
+        CW_TOGG,    KC_LCTL,    KC_LALT,    KC_LGUI,    KC_LSFT,    KC_VOLD,    KC_LEFT,       KC_DOWN, KC_UP,   KC_RGHT,       _______, _______,
         _______,    LGUI(KC_Z), LGUI(KC_X), LGUI(KC_C), LGUI(KC_V), LGUI(KC_Y), KC_HOME,       KC_PGDN, KC_PGUP, KC_END,        _______, _______,
                                 LCG(KC_Q),  _______,    _______,                _______, _______, _______
     ),
@@ -163,7 +170,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     // KC_SLSH on the base layer; _FN puts F12 there instead.
     [_NUM] = LAYOUT_split_3x6_3(
         _______, KC_1,    KC_2,    KC_3,    KC_4,    KC_5,       KC_6,    KC_7, KC_8, KC_9, KC_0,    _______,
-        KC_CAPS, KC_LCTL, KC_LALT, KC_LGUI, KC_LSFT, KC_EQL,     KC_PLUS, KC_4, KC_5, KC_6, KC_0,    _______,
+        CW_TOGG, KC_LCTL, KC_LALT, KC_LGUI, KC_LSFT, KC_EQL,     KC_PLUS, KC_4, KC_5, KC_6, KC_0,    _______,
         _______, _______, _______, _______, _______, _______,    KC_MINS, KC_1, KC_2, KC_3, _______, _______,
                           _______, _______, _______,             _______, _______, KC_P0
     ),

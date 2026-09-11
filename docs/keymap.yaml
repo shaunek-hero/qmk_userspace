@@ -99,7 +99,7 @@ layers:
   - Gui+]
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
+  - CW TOGG
   - LCTL
   - LALT
   - LGUI
@@ -142,7 +142,7 @@ layers:
   - '9'
   - '0'
   - {t: ▽, type: trans}
-  - CAPS
+  - CW TOGG
   - LCTL
   - LALT
   - LGUI
