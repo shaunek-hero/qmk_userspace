@@ -37,8 +37,8 @@ layers:
   - .
   - /
   - '-'
+  - ''
   - NUM
-  - LSFT
   - NAV
   - {t: ENT, h: NUM}
   - {t: SPC, h: SYM}
@@ -166,8 +166,8 @@ layers:
   - '3'
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}
-  - {type: held}
   - {t: ▽, type: trans}
+  - {type: held}
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}

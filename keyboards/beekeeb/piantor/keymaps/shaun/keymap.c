@@ -89,8 +89,8 @@ uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
 // fast rolls did not.
 //
 // LT(_NUM, KC_ENT) is on the neighbouring thumb and has the same flaw -- the
-// right-hand digits would emit a Return -- but MO(_NUM) on the left outer thumb
-// is an opposite-hand route that masks it.
+// right-hand digits would emit a Return -- but MO(_NUM) on the left middle
+// thumb is an opposite-hand route that masks it.
 //
 // QMK's docs suggest '*' handedness for exactly this case (docs/tap_hold.md).
 // Overriding per-chord rather than per-key keeps this in terms of keycodes
@@ -115,6 +115,11 @@ bool get_chordal_hold(uint16_t tap_hold_keycode, keyrecord_t *tap_hold_record,
 // inner thumb transparent and _NUM leaves the left one transparent, so each
 // still reaches the other and the order of the two presses does not matter.
 //
+// _NUM also sits on the left middle thumb, so MO(_NUM) + MO(_NAV) -- the two
+// adjacent left thumbs -- is a second, same-hand route to _FN. It is a
+// consequence of the tri-layer rather than the point of it, but it works, and
+// it is worth knowing the pair is live in case it ever fires by accident.
+//
 // _FN is the highest layer number, so its keys win over the _NAV and _NUM
 // definitions underneath while all three are on.
 layer_state_t layer_state_set_user(layer_state_t state) {
@@ -131,7 +136,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                                                                  KC_H,         RSFT_T(KC_J), RGUI_T(KC_K), RALT_T(KC_L), RCTL_T(KC_SCLN), ALL_T(KC_QUOT),
         KC_UNDS, KC_Z,         KC_X,         KC_C,         KC_V,         KC_B,
                                                                                  KC_N,         KC_M,         KC_COMM,      KC_DOT,       KC_SLSH,         KC_MINS,
-                               MO(_NUM),     KC_LSFT,      MO(_NAV),
+                               KC_NO,        MO(_NUM),     MO(_NAV),
                                                                                  LT(_NUM, KC_ENT), LT(_SYM, KC_SPC), OSM(MOD_HYPR)
     ),
 
