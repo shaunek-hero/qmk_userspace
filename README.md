@@ -1,7 +1,12 @@
 # QMK Userspace
 
-Shaun's QMK keymaps. Currently: `beekeeb/piantor` (42-key Piantor), migrated
-from Vial.
+Shaun's QMK keymaps:
+
+- `cheapino` (36-key Cheapino v2): the current board. Its keymap is the Piantor
+  keymap without the outer columns.
+- `beekeeb/piantor` (42-key Piantor), migrated from Vial.
+
+The diagram below shows the Cheapino.
 
 ![Keymap](docs/keymap.svg)
 
@@ -34,10 +39,40 @@ qmk config user.overlay_dir="$HOME/code/qmk_userspace"
 qmk compile -kb beekeeb/piantor -km shaun
 ```
 
+## Cheapino setup
+
+Official QMK has no Cheapino, and QMK only looks for keyboard definitions inside
+`qmk_firmware`, so a userspace normally could not build it. To get around that,
+`keyboards/cheapino/` holds a copy of the keyboard from the `cheapinov2` branch
+of [tompi/qmk_firmware](https://github.com/tompi/qmk_firmware), and is linked
+into the QMK checkout. Do this once per machine:
+
+```sh
+ln -s "$HOME/code/qmk_userspace/keyboards/cheapino" "$HOME/qmk_firmware/keyboards/cheapino"
+```
+
+The copy differs from upstream in three ways. The first two are needed to build
+on current QMK:
+
+- `keyboard.json` has a non-empty `url`, which validation requires.
+- `matrix.c` uses the current GPIO function names and `debounce_init()`.
+- `encoder.c` holds this keymap's knob actions. They live there rather than in
+  the keymap, and refer to `_NAV` and `_NUM` by layer number, so keep the two in
+  step.
+
+`qmk.json` leaves the Cheapino out on purpose: GitHub CI builds against official
+QMK, where it does not exist. Build it locally instead.
+
 ## Flashing
 
+`./flash.sh` builds the Cheapino, waits for `RPI-RP2` to mount, and copies the
+firmware. Hold `BOOT` on the RP2040-Zero while plugging in USB. The board has a
+single MCU, so it only needs flashing once.
+
+For the Piantor, use `./flash.sh piantor`.
+
 The Piantor is RP2040/UF2 — it flashes as a USB mass-storage volume, not over
-a serial protocol. `./flash-piantor.sh` builds, waits for `RPI-RP2` to mount,
+a serial protocol. `./flash.sh piantor` builds, waits for `RPI-RP2` to mount,
 and copies the firmware.
 
 Run it **once per half**, holding `BOOTSEL` on that half while plugging in USB.

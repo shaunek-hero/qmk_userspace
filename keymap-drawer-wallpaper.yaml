@@ -16,3 +16,7 @@ draw_config:
   # deterministic. Keys come out #3f4750 with #d1d6db legends; see WALL_BG in
   # draw-keymap.sh for the ground they sit on.
   dark_mode: true
+
+  # The knob is not a key, so the layout has no place for it. Keep in sync with
+  # keyboards/cheapino/encoder.c.
+  footer_text: "Knob: volume, or scroll while holding NAV. Click: play/pause, or Shift+Cmd+W while holding NUM."
