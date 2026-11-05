@@ -34,9 +34,9 @@ layers:
   - {t: TAB, h: ALL}
   - NUM
   - NAV
-  - {t: ENT, h: NUM}
+  - {t: ENT, h: RSFT}
   - {t: SPC, h: SYM}
-  - {t: HYPR, h: sticky}
+  - {t: BSPC, h: ALL}
   SYM:
   - '!'
   - '@'
@@ -186,7 +186,7 @@ layers:
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}
 combos:
-  - {p: [32, 33], k: FN, l: [BASE], a: bottom}
+  - {p: [31, 32], k: FN, l: [BASE], a: bottom}
   - {p: [21, 22], k: Esc, l: [BASE]}
   - {p: [13, 14], k: _, l: [BASE]}
   - {p: [15, 16], k: "-", l: [BASE]}

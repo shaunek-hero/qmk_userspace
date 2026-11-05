@@ -33,12 +33,12 @@ keymap parse -q "$OUT_DIR/keymap.json" \
 # 10-19 home row, 20-29 bottom row, 30-35 thumbs. Keep in sync with key_combos
 # in keymap.c.
 #
-# The _FN layer is a tri-layer (hold both inner thumbs), which lives in
+# The _FN layer is a tri-layer (hold the left middle and inner thumbs), which lives in
 # layer_state_set_user(), so it is drawn as a combo on those two keys to show
 # how FN is reached.
 cat >> "$OUT_DIR/keymap.yaml" <<'YAML'
 combos:
-  - {p: [32, 33], k: FN, l: [BASE], a: bottom}
+  - {p: [31, 32], k: FN, l: [BASE], a: bottom}
   - {p: [21, 22], k: Esc, l: [BASE]}
   - {p: [13, 14], k: _, l: [BASE]}
   - {p: [15, 16], k: "-", l: [BASE]}

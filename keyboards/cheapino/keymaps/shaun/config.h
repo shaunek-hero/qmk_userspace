@@ -14,7 +14,7 @@
 //   "Tapping Force Hold" (unchecked) — replaced by QUICK_TAP_TERM, which
 //       defaults to TAPPING_TERM. Enabling the old option == QUICK_TAP_TERM 0,
 //       so leaving it undefined reproduces the unchecked box. That is still the
-//       global default here, but the two thumb layer-taps now opt out per-key —
+//       global default here, but the Enter and Space thumbs now opt out per-key —
 //       see QUICK_TAP_TERM_PER_KEY below.
 //
 // "Retro Tapping" was unchecked, and RETRO_TAPPING is off by default.
@@ -34,10 +34,9 @@
 // (and silently clamps anything larger, action_tapping.h:26), so it is 200 ms.
 //
 // That is worth keeping on the home row — tap `a`, hold `a`, get `aaaa` — but
-// it is pure downside on the thumb layer-taps, where the tap keycodes are Enter
-// and Space. Typing a space and then reaching for a key on its layer within
-// 200 ms auto-repeated the space instead. See get_quick_tap_term() in
-// keymap.c, which returns 0 for those two keys only.
+// it is pure downside on the Enter and Space thumbs. Typing a space and then
+// reaching for a key on its layer within 200 ms auto-repeated the space instead.
+// See get_quick_tap_term() in keymap.c, which returns 0 for those two keys only.
 #define QUICK_TAP_TERM_PER_KEY
 
 // Home row mods: settle a mod-tap as *tapped* when the next key is on the same
@@ -54,7 +53,7 @@
 // keyboard.json, correctly for LAYOUT_split_3x6_3 (left 'L', right 'R').
 //
 // The thumbs come out of that derivation as L L L R R R, which is wrong for
-// the two thumb layer-taps — see get_chordal_hold() in keymap.c, which exempts
+// the Enter and Space thumbs — see get_chordal_hold() in keymap.c, which exempts
 // them so same-hand chords like SYM+I (`*`) work.
 #define CHORDAL_HOLD
 

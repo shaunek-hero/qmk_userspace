@@ -286,9 +286,8 @@ path.combo { stroke: #7f7f7f; }
 <g transform="translate(392, 238)" class="key keypos-33">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
 <text x="0" y="0" class="key tap">ENT</text>
-<a href="#NUM">
-<text x="0" y="24" class="key hold layer-activator">NUM</text>
-</a></g>
+<text x="0" y="24" class="key hold">RSFT</text>
+</g>
 <g transform="translate(448, 224)" class="key keypos-34">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
 <text x="0" y="0" class="key tap">SPC</text>
@@ -297,15 +296,15 @@ path.combo { stroke: #7f7f7f; }
 </a></g>
 <g transform="translate(504, 210)" class="key keypos-35">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
-<text x="0" y="0" class="key tap">HYPR</text>
-<text x="0" y="24" class="key hold">sticky</text>
+<text x="0" y="0" class="key tap">BSPC</text>
+<text x="0" y="24" class="key hold">ALL</text>
 </g>
 <g class="combo combopos-0">
-<path d="M336,267 h-50 a6.0,6.0 0 0 1 -6.0,-6.0 v-4" class="combo"/>
-<path d="M336,267 h50 a6.0,6.0 0 0 0 6.0,-6.0 v-4" class="combo"/>
-<rect rx="6" ry="6" x="322" y="254" width="28" height="26" class="combo"/>
+<path d="M252,267 h-22 a6.0,6.0 0 0 1 -6.0,-6.0 v-18" class="combo"/>
+<path d="M252,267 h22 a6.0,6.0 0 0 0 6.0,-6.0 v-4" class="combo"/>
+<rect rx="6" ry="6" x="238" y="254" width="28" height="26" class="combo"/>
 <a href="#FN">
-<text x="336" y="267" class="combo tap layer-activator">FN</text>
+<text x="252" y="267" class="combo tap layer-activator">FN</text>
 </a></g>
 <g class="combo combopos-1">
 <rect rx="6" ry="6" x="98" y="130" width="28" height="26" class="combo"/>

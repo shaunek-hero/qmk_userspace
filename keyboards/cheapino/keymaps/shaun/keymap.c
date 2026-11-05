@@ -5,18 +5,24 @@
 // macro. Dropping the outer columns leaves these keys needing a new home:
 //
 //   Tab             Left outer thumb, which was blank on the Piantor.
-//   Backspace       _NAV, over `;`, where it sits on the Sofle.
-//   Hyper           Hold G, hold H or hold the left outer thumb, or tap the
-//                   right outer thumb as a one-shot. G and H come from the
-//                   Sofle. Trying them alongside the thumbs is deliberate: once
-//                   one route wins, the others should go.
+//   Backspace       Right outer thumb, which was OSM(MOD_HYPR) on the Piantor.
+//                   Also on _NAV, over `;`, where it sits on the Sofle.
+//   Hyper           Hold G, hold H or hold either outer thumb. G and H come
+//                   from the Sofle. Trying them alongside the thumbs is
+//                   deliberate: once one route wins, the others should go.
 //   Esc, ', -, _    Combos, the ones already used on the Sofle. `"` comes along
 //                   too, because Shift+' would otherwise need three keys.
 //   Caps Word       _NAV, over U.
 //   Shift+Cmd+W     Not bound anywhere: it was the _NAV outer column key.
 //
-// ALL_T(KC_TAB) gets no Flow Tap protection, since KC_TAB is outside QMK's
-// default is_flow_tap_key(). G and H are letters, so they are covered.
+// Hold-Backspace is Hyper, so repeating Backspace takes a tap and then a hold
+// inside QUICK_TAP_TERM, or holding it on _NAV.
+//
+// The outer thumbs get no Flow Tap protection, since KC_TAB and KC_BSPC are
+// outside QMK's default is_flow_tap_key(). G and H are letters, so they are
+// covered. The case to watch is correcting a typo: Backspace held through a
+// left-hand letter is an opposite-hand press, which PERMISSIVE_HOLD can resolve
+// as Hyper+letter.
 //
 // Encoder actions are not in this file: see keyboards/cheapino/encoder.c.
 #include QMK_KEYBOARD_H
@@ -26,7 +32,7 @@ enum layers {
     _SYM,  // 1
     _NAV,  // 2
     _NUM,  // 3
-    _FN,   // 4 — tri-layer: _NAV + _NUM, i.e. both inner thumbs
+    _FN,   // 4 — tri-layer: _NUM + _NAV, i.e. the left middle and inner thumbs
 };
 
 const uint16_t PROGMEM combo_dquo[] = {KC_COMM, KC_DOT, COMBO_END};
@@ -64,7 +70,7 @@ uint16_t get_flow_tap_term(uint16_t keycode, keyrecord_t *record, uint16_t prev_
     return 0;
 }
 
-// No auto-repeat on the thumb layer keys.
+// No auto-repeat on the Enter and Space thumbs.
 //
 // Quick tap exists so a mod-tap can repeat its letter: tap `a`, press and hold
 // it again inside QUICK_TAP_TERM, get `aaaa` rather than Ctrl. Worth keeping on
@@ -78,14 +84,14 @@ uint16_t get_flow_tap_term(uint16_t keycode, keyrecord_t *record, uint16_t prev_
 // Space and not mid-word.
 uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
-        case LT(_NUM, KC_ENT):
+        case RSFT_T(KC_ENT):
         case LT(_SYM, KC_SPC):
             return 0;
     }
     return QUICK_TAP_TERM;
 }
 
-// Let the thumb layer keys chord with their own hand.
+// Let the Enter and Space thumbs chord with their own hand.
 //
 // CHORDAL_HOLD settles a tap-hold as *tapped* when the next key is on the same
 // hand, which is exactly what protects the home row mods. Applied to a thumb
@@ -97,9 +103,8 @@ uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
 // TAPPING_TERM, which is why holding the thumb deliberately always worked and
 // fast rolls did not.
 //
-// LT(_NUM, KC_ENT) is on the neighbouring thumb and has the same flaw -- the
-// right-hand digits would emit a Return -- but MO(_NUM) on the left middle
-// thumb is an opposite-hand route that masks it.
+// RSFT_T(KC_ENT) is on the neighbouring thumb and has the same flaw: a quick
+// right-hand capital would emit a Return and then the lowercase letter.
 //
 // QMK's docs suggest '*' handedness for exactly this case (docs/tap_hold.md).
 // Overriding per-chord rather than per-key keeps this in terms of keycodes
@@ -109,25 +114,18 @@ uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
 bool get_chordal_hold(uint16_t tap_hold_keycode, keyrecord_t *tap_hold_record,
                       uint16_t other_keycode, keyrecord_t *other_record) {
     switch (tap_hold_keycode) {
-        case LT(_NUM, KC_ENT):
+        case RSFT_T(KC_ENT):
         case LT(_SYM, KC_SPC):
             return true;
     }
     return get_chordal_hold_default(tap_hold_record, other_record);
 }
 
-// _FN is a tri-layer: hold both inner thumbs.
+// _FN is a tri-layer: hold the left middle and inner thumbs.
 //
-// The left inner thumb is MO(_NAV) and the right inner thumb is
-// LT(_NUM, KC_ENT), so holding the pair turns on _NAV and _NUM together and
-// update_tri_layer_state() lights _FN on top of them. _NAV leaves the right
-// inner thumb transparent and _NUM leaves the left one transparent, so each
-// still reaches the other and the order of the two presses does not matter.
-//
-// _NUM also sits on the left middle thumb, so MO(_NUM) + MO(_NAV) -- the two
-// adjacent left thumbs -- is a second, same-hand route to _FN. It is a
-// consequence of the tri-layer rather than the point of it, but it works, and
-// it is worth knowing the pair is live in case it ever fires by accident.
+// Those are MO(_NUM) and MO(_NAV), so holding the pair turns on both layers and
+// update_tri_layer_state() lights _FN on top of them. _NUM and _NAV each leave
+// the other's thumb transparent, so the order of the two presses does not matter.
 //
 // _FN is the highest layer number, so its keys win over the _NAV and _NUM
 // definitions underneath while all three are on.
@@ -142,7 +140,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_Q,         KC_W,         KC_E,         KC_R,         KC_T,           KC_Y,        KC_U,         KC_I,         KC_O,         KC_P,
         LCTL_T(KC_A), LALT_T(KC_S), LGUI_T(KC_D), LSFT_T(KC_F), ALL_T(KC_G),    ALL_T(KC_H), RSFT_T(KC_J), RGUI_T(KC_K), RALT_T(KC_L), RCTL_T(KC_SCLN),
         KC_Z,         KC_X,         KC_C,         KC_V,         KC_B,           KC_N,        KC_M,         KC_COMM,      KC_DOT,       KC_SLSH,
-                                    ALL_T(KC_TAB), MO(_NUM), MO(_NAV),          LT(_NUM, KC_ENT), LT(_SYM, KC_SPC), OSM(MOD_HYPR)
+                                    ALL_T(KC_TAB), MO(_NUM), MO(_NAV),          RSFT_T(KC_ENT), LT(_SYM, KC_SPC), ALL_T(KC_BSPC)
     ),
 
     // Symbols — held via the middle right thumb
@@ -174,7 +172,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
 
     // F-keys, laid out over the same positions as the number pad.
-    // Reached by holding both inner thumbs (see layer_state_set_user above).
+    // Reached by holding the left middle and inner thumbs (see
+    // layer_state_set_user above).
     [_FN] = LAYOUT_split_3x5_3(
         _______, _______, _______, _______, _______,    _______, KC_F7, KC_F8, KC_F9, KC_F10,
         _______, _______, _______, _______, _______,    _______, KC_F4, KC_F5, KC_F6, KC_F11,
