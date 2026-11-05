@@ -6,13 +6,22 @@ Shaun's QMK keymaps:
   keymap without the outer columns.
 - `beekeeb/piantor` (42-key Piantor), migrated from Vial.
 
-The diagram below shows the Cheapino.
+Each board has its own keymap, under `keyboards/<board>/keymaps/shaun`, and its
+own diagram and wallpaper, under `docs/<board>/`.
 
-![Keymap](docs/keymap.svg)
+### Cheapino
 
-Regenerate that diagram with `./draw-keymap.sh` after changing the keymap
-(needs `pipx install keymap-drawer`). It reads `keymap.c` via `qmk c2json`, so
-it can't drift from the real keymap.
+![Cheapino keymap](docs/cheapino/keymap.svg)
+
+### Piantor
+
+![Piantor keymap](docs/piantor/keymap.svg)
+
+Regenerate a board's images with `./draw-keymap.sh cheapino` or
+`./draw-keymap.sh piantor` after changing its keymap (needs
+`pipx install keymap-drawer`). It reads `keymap.c` via `qmk c2json`, so the
+layers can't drift from the real keymap. Combos and the knob text are written
+by hand in that script, so keep those in step.
 
 ## Local setup
 

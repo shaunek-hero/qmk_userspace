@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
-# Render the Cheapino keymap to an SVG showing every layer.
+# Render a board's keymap to an SVG showing every layer, plus a wallpaper.
+#
+#   ./draw-keymap.sh [cheapino|piantor]     (defaults to cheapino)
+#
+# Each board's output goes in its own folder, docs/<board>/.
 #
 # Pipeline: keymap.c -> qmk c2json -> keymap-drawer -> SVG
 #
@@ -8,9 +12,25 @@ set -euo pipefail
 
 export PATH="/opt/homebrew/opt/arm-gcc-bin@14/bin:$HOME/.local/bin:$PATH"
 
-KEYBOARD_DIR="$HOME/code/qmk_userspace/keyboards/cheapino"
-KEYMAP_C="$KEYBOARD_DIR/keymaps/shaun/keymap.c"
-OUT_DIR="$HOME/code/qmk_userspace/docs"
+REPO="$HOME/code/qmk_userspace"
+BOARD="${1:-cheapino}"
+case "$BOARD" in
+    cheapino)
+        KB="cheapino"
+        # The physical layout comes from the keyboard's own keyboard.json,
+        # because keymap-drawer's default lookup goes to official QMK, which has
+        # no Cheapino.
+        LAYOUT_ARGS=(-j "$REPO/keyboards/cheapino/keyboard.json" -l LAYOUT_split_3x5_3)
+        ;;
+    piantor)
+        KB="beekeeb/piantor"
+        LAYOUT_ARGS=()
+        ;;
+    *) echo "Unknown board: $BOARD (expected cheapino or piantor)"; exit 1 ;;
+esac
+
+KEYMAP_C="$REPO/keyboards/$KB/keymaps/shaun/keymap.c"
+OUT_DIR="$REPO/docs/$BOARD"
 mkdir -p "$OUT_DIR"
 
 command -v keymap >/dev/null || { echo "keymap-drawer missing: pipx install keymap-drawer"; exit 1; }
@@ -19,7 +39,7 @@ echo "==> Exporting keymap to JSON..."
 # c2json emits the layer enum names (MO(_NUM)); keymap-drawer needs indices to
 # recognise a layer-tap as tap/hold, so substitute them. Keep in sync with the
 # enum in keymap.c.
-qmk c2json -kb cheapino -km shaun "$KEYMAP_C" \
+qmk c2json -kb "$KB" -km shaun "$KEYMAP_C" \
     | sed -e 's/_SYM/1/g' -e 's/_NAV/2/g' -e 's/_NUM/3/g' -e 's/_FN/4/g' \
     > "$OUT_DIR/keymap.json"
 
@@ -29,14 +49,18 @@ keymap parse -q "$OUT_DIR/keymap.json" \
     -o "$OUT_DIR/keymap.yaml"
 
 # c2json only reads the keymap array, so anything defined elsewhere has to be
-# added by hand. Positions are indices into LAYOUT_split_3x5_3: 0-9 top row,
-# 10-19 home row, 20-29 bottom row, 30-35 thumbs. Keep in sync with key_combos
-# in keymap.c.
+# added by hand, per board. Positions are indices into the board's layout.
 #
-# The _FN layer is a tri-layer (hold the left middle and inner thumbs), which lives in
-# layer_state_set_user(), so it is drawn as a combo on those two keys to show
-# how FN is reached.
-cat >> "$OUT_DIR/keymap.yaml" <<'YAML'
+# On both boards _FN is a tri-layer, which lives in layer_state_set_user(), so
+# it is drawn as a combo on the two thumbs that reach it.
+case "$BOARD" in
+    cheapino)
+        # LAYOUT_split_3x5_3: 0-9 top row, 10-19 home row, 20-29 bottom row,
+        # 30-35 thumbs. Keep in sync with key_combos in keymap.c.
+        #
+        # The knob is not a key, so the layout has no place for it and it gets a
+        # footer instead. Keep in sync with keyboards/cheapino/encoder.c.
+        cat >> "$OUT_DIR/keymap.yaml" <<'YAML'
 combos:
   - {p: [31, 32], k: FN, l: [BASE], a: bottom}
   - {p: [21, 22], k: Esc, l: [BASE]}
@@ -44,14 +68,24 @@ combos:
   - {p: [15, 16], k: "-", l: [BASE]}
   - {p: [17, 18], k: "'", l: [BASE]}
   - {p: [27, 28], k: '"', l: [BASE]}
+draw_config:
+  footer_text: "Knob: volume, or scroll while holding NAV. Click: play/pause, or Shift+Cmd+W while holding NUM."
 YAML
+        ;;
+    piantor)
+        # LAYOUT_split_3x6_3: the inner thumbs are positions 38 and 39.
+        cat >> "$OUT_DIR/keymap.yaml" <<'YAML'
+combos:
+  - {p: [38, 39], k: FN, l: [BASE], a: bottom}
+YAML
+        ;;
+esac
 
 echo "==> Drawing..."
-# The physical layout comes from the keyboard's own keyboard.json, because
-# keymap-drawer's default lookup goes to official QMK, which has no Cheapino.
-LAYOUT_ARGS=(-j "$KEYBOARD_DIR/keyboard.json" -l LAYOUT_split_3x5_3)
-keymap -c "$HOME/code/qmk_userspace/keymap-drawer.yaml" \
-    draw "$OUT_DIR/keymap.yaml" "${LAYOUT_ARGS[@]}" -o "$OUT_DIR/keymap.svg"
+# The odd expansion is for macOS's bash 3.2, where set -u treats an empty array
+# as unset.
+keymap -c "$REPO/keymap-drawer.yaml" \
+    draw "$OUT_DIR/keymap.yaml" ${LAYOUT_ARGS[@]+"${LAYOUT_ARGS[@]}"} -o "$OUT_DIR/keymap.svg"
 
 echo "==> Wrote $OUT_DIR/keymap.svg"
 
@@ -77,8 +111,8 @@ WALL_BG="${WALL_BG:-#1e2228}"
 WALL_FIT="${WALL_FIT:-94%}"
 
 echo "==> Drawing wallpaper..."
-keymap -c "$HOME/code/qmk_userspace/keymap-drawer-wallpaper.yaml" \
-    draw "$OUT_DIR/keymap.yaml" "${LAYOUT_ARGS[@]}" -o "$OUT_DIR/keymap-wallpaper.svg"
+keymap -c "$REPO/keymap-drawer-wallpaper.yaml" \
+    draw "$OUT_DIR/keymap.yaml" ${LAYOUT_ARGS[@]+"${LAYOUT_ARGS[@]}"} -o "$OUT_DIR/keymap-wallpaper.svg"
 
 CHROME="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 if [[ ! -x "$CHROME" ]]; then

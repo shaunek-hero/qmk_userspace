@@ -192,3 +192,5 @@ combos:
   - {p: [15, 16], k: "-", l: [BASE]}
   - {p: [17, 18], k: "'", l: [BASE]}
   - {p: [27, 28], k: '"', l: [BASE]}
+draw_config:
+  footer_text: "Knob: volume, or scroll while holding NAV. Click: play/pause, or Shift+Cmd+W while holding NUM."
