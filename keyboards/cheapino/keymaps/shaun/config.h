@@ -1,0 +1,83 @@
+#pragma once
+
+// Copied from the Piantor keymap. Only the #undefs and COMBO_TERM are new.
+//
+// Settings carried over from the Vial "QMK Settings" tab.
+//
+// Two of the Vial options have no direct equivalent in modern QMK:
+//
+//   "Ignore Mod Tap Interrupt" (checked) — became the DEFAULT mod-tap behavior
+//       in QMK 0.21 (see docs/ChangeLog/20230528.md). Defining the old macro is
+//       now a hard #error. Opting *out* would mean HOLD_ON_OTHER_KEY_PRESS, so
+//       leaving it undefined is what reproduces the checked box.
+//
+//   "Tapping Force Hold" (unchecked) — replaced by QUICK_TAP_TERM, which
+//       defaults to TAPPING_TERM. Enabling the old option == QUICK_TAP_TERM 0,
+//       so leaving it undefined reproduces the unchecked box. That is still the
+//       global default here, but the two thumb layer-taps now opt out per-key —
+//       see QUICK_TAP_TERM_PER_KEY below.
+//
+// "Retro Tapping" was unchecked, and RETRO_TAPPING is off by default.
+
+// keyboards/cheapino/config.h sets 230, hence the #undef: without it the
+// redefinition is a hard error.
+#undef TAPPING_TERM
+#define TAPPING_TERM 200
+
+// Combos are not a Piantor feature. 40 is the Sofle's value; QMK's default is 50.
+#define COMBO_TERM 40
+#define PERMISSIVE_HOLD
+
+// Quick tap: after tapping a dual-role key, pressing it again within
+// QUICK_TAP_TERM repeats the *tap* keycode instead of engaging the hold, so a
+// mod-tap can still auto-repeat its letter. QMK defaults it to TAPPING_TERM
+// (and silently clamps anything larger, action_tapping.h:26), so it is 200 ms.
+//
+// That is worth keeping on the home row — tap `a`, hold `a`, get `aaaa` — but
+// it is pure downside on the thumb layer-taps, where the tap keycodes are Enter
+// and Space. Typing a space and then reaching for a key on its layer within
+// 200 ms auto-repeated the space instead. See get_quick_tap_term() in
+// keymap.c, which returns 0 for those two keys only.
+#define QUICK_TAP_TERM_PER_KEY
+
+// Home row mods: settle a mod-tap as *tapped* when the next key is on the same
+// hand, which is what kills accidental mods during fast rolls. Pairs with
+// PERMISSIVE_HOLD, which governs the opposite-hands case.
+//
+// Two things to know:
+//   - It has no effect after TAPPING_TERM, so deliberately holding a mod past
+//     200 ms still gives a same-hand chord.
+//   - Same-hand shortcuts (Cmd+C is D and C, both left) now want the mirrored
+//     mod instead: hold RGUI_T(KC_K) on the right, press C on the left.
+//
+// Handedness needs no table here — QMK derives it from the split geometry in
+// keyboard.json, correctly for LAYOUT_split_3x6_3 (left 'L', right 'R').
+//
+// The thumbs come out of that derivation as L L L R R R, which is wrong for
+// the two thumb layer-taps — see get_chordal_hold() in keymap.c, which exempts
+// them so same-hand chords like SYM+I (`*`) work.
+#define CHORDAL_HOLD
+
+// Flow Tap: if a tap-hold key is pressed within this many ms of the previous
+// key, force the tap. In effect it switches mod-taps off during fast typing,
+// which is the case CHORDAL_HOLD can't cover — an opposite-hand roll like the
+// `/` in `/Applications` followed by `A`, which PERMISSIVE_HOLD would
+// otherwise resolve as a hold and fire Hyper+A.
+//
+// The default is_flow_tap_key() covers KC_A-KC_Z and KC_SLSH, so z, / and
+// every home row mod are in scope. The two Shifts are then exempted again in
+// keymap.c via get_flow_tap_term(), because capitalising mid-sentence is
+// always a fast roll and was turning `I` into `fi`.
+//
+// The trade: mid-flow mod chords no longer work. Cmd+C while typing fast
+// wants a brief pause first. 150 ms is QMK's suggested starting point; lower
+// it if it feels obstructive, raise it if stray mods still get through.
+#define FLOW_TAP_TERM 150
+
+// The keyboard's config.h turns this on. Holding F + J is not wanted here:
+// Caps Word lives on _NAV instead.
+#undef BOTH_SHIFTS_TURNS_ON_CAPS_WORD
+
+// Caps Word shifts the next word,
+// then drops back to lowercase on space/punctuation or after this many ms idle.
+#define CAPS_WORD_IDLE_TIMEOUT 5000

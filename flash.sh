@@ -1,21 +1,42 @@
 #!/usr/bin/env bash
-# Build and flash the Piantor. Run once per half.
+# Build and flash a keyboard.
 #
-# The Piantor is RP2040/UF2: each half has its own MCU and its own USB port,
-# and flashes by mounting as a USB mass-storage volume named RPI-RP2 and
-# having the .uf2 copied onto it. There is no `qmk flash` serial protocol,
-# and there is no way to reach one half through the other -- you plug the
-# cable into whichever half you are flashing.
+#   ./flash.sh [cheapino|piantor] [--no-build]     (defaults to cheapino)
+#
+# --no-build flashes the existing .uf2, and can go before or after the board.
+#
+# Both boards are RP2040/UF2: they flash by mounting as a USB mass-storage
+# volume named RPI-RP2 and having the .uf2 copied onto it. There is no
+# `qmk flash` serial protocol.
+#
+# The Cheapino has a single MCU, so it flashes once. The Piantor
+# has an MCU and USB port per half and there is no way to reach one half through
+# the other, so run this once per half with the cable in the half being flashed.
 set -euo pipefail
 
 export PATH="/opt/homebrew/opt/arm-gcc-bin@14/bin:$PATH"
 
-UF2="$HOME/code/qmk_userspace/beekeeb_piantor_shaun.uf2"
+BOARD="cheapino"
+BUILD=true
+for arg in "$@"; do
+    case "$arg" in
+        --no-build) BUILD=false ;;
+        *) BOARD="$arg" ;;
+    esac
+done
+
+case "$BOARD" in
+    cheapino) KB="cheapino";        TWO_MCUS=false ;;
+    piantor)  KB="beekeeb/piantor"; TWO_MCUS=true ;;
+    *) echo "Unknown board: $BOARD (expected cheapino or piantor)"; exit 1 ;;
+esac
+
+UF2="$HOME/code/qmk_userspace/${KB//\//_}_shaun.uf2"
 VOL="/Volumes/RPI-RP2"
 
-if [[ "${1:-}" != "--no-build" ]]; then
+if [[ "$BUILD" == true ]]; then
     echo "==> Building..."
-    qmk compile -kb beekeeb/piantor -km shaun
+    qmk compile -kb "$KB" -km shaun
 fi
 
 [[ -f "$UF2" ]] || { echo "No firmware at $UF2"; exit 1; }
@@ -23,11 +44,16 @@ fi
 if [[ -d "$VOL" ]]; then
     echo "==> $VOL already mounted."
 else
-    echo "==> Waiting for a half in bootloader mode (RPI-RP2)..."
+    echo "==> Waiting for the $BOARD in bootloader mode (RPI-RP2)..."
     echo "    1. Unplug USB."
-    echo "    2. Press and HOLD the BOOTSEL button on the half you're flashing."
-    echo "    3. While still holding, plug USB into THAT half."
-    echo "    4. Release BOOTSEL."
+    if [[ "$TWO_MCUS" == true ]]; then
+        echo "    2. Press and HOLD the BOOTSEL button on the half you're flashing."
+        echo "    3. While still holding, plug USB into THAT half."
+    else
+        echo "    2. Press and HOLD the BOOT button on the RP2040-Zero."
+        echo "    3. While still holding, plug USB in."
+    fi
+    echo "    4. Release the button."
     echo "    Ctrl-C to cancel."
     while [[ ! -d "$VOL" ]]; do sleep 1; done
 fi
@@ -118,8 +144,10 @@ if [[ -d "$VOL" ]]; then
     exit 1
 fi
 
-echo "==> Flashed. The half rebooted and $VOL disappeared, which is what success looks like."
+echo "==> Flashed. The board rebooted and $VOL disappeared, which is what success looks like."
 echo "    (A 'Disk Not Ejected Properly' notice from macOS here is normal.)"
-echo
-echo "    Now repeat for the other half, plugging USB into that one."
-echo "    When both are done, plug USB into the LEFT half for normal use."
+if [[ "$TWO_MCUS" == true ]]; then
+    echo
+    echo "    Now repeat for the other half, plugging USB into that one."
+    echo "    When both are done, plug USB into the LEFT half for normal use."
+fi

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Render the Piantor keymap to an SVG showing every layer.
+# Render the Cheapino keymap to an SVG showing every layer.
 #
 # Pipeline: keymap.c -> qmk c2json -> keymap-drawer -> SVG
 #
@@ -8,7 +8,8 @@ set -euo pipefail
 
 export PATH="/opt/homebrew/opt/arm-gcc-bin@14/bin:$HOME/.local/bin:$PATH"
 
-KEYMAP_C="$HOME/code/qmk_userspace/keyboards/beekeeb/piantor/keymaps/shaun/keymap.c"
+KEYBOARD_DIR="$HOME/code/qmk_userspace/keyboards/cheapino"
+KEYMAP_C="$KEYBOARD_DIR/keymaps/shaun/keymap.c"
 OUT_DIR="$HOME/code/qmk_userspace/docs"
 mkdir -p "$OUT_DIR"
 
@@ -18,7 +19,7 @@ echo "==> Exporting keymap to JSON..."
 # c2json emits the layer enum names (MO(_NUM)); keymap-drawer needs indices to
 # recognise a layer-tap as tap/hold, so substitute them. Keep in sync with the
 # enum in keymap.c.
-qmk c2json -kb beekeeb/piantor -km shaun "$KEYMAP_C" \
+qmk c2json -kb cheapino -km shaun "$KEYMAP_C" \
     | sed -e 's/_SYM/1/g' -e 's/_NAV/2/g' -e 's/_NUM/3/g' -e 's/_FN/4/g' \
     > "$OUT_DIR/keymap.json"
 
@@ -27,19 +28,30 @@ keymap parse -q "$OUT_DIR/keymap.json" \
     -l BASE SYM NAV NUM FN \
     -o "$OUT_DIR/keymap.yaml"
 
+# c2json only reads the keymap array, so anything defined elsewhere has to be
+# added by hand. Positions are indices into LAYOUT_split_3x5_3: 0-9 top row,
+# 10-19 home row, 20-29 bottom row, 30-35 thumbs. Keep in sync with key_combos
+# in keymap.c.
+#
 # The _FN layer is a tri-layer (hold both inner thumbs), which lives in
-# layer_state_set_user() rather than in the keymap array, so nothing in the
-# parsed JSON points at it. Draw it as a combo on the two inner thumb keys --
-# positions 38 and 39 of the 42-key split_3x6_3 layout -- so the diagram still
-# shows how FN is reached.
+# layer_state_set_user(), so it is drawn as a combo on those two keys to show
+# how FN is reached.
 cat >> "$OUT_DIR/keymap.yaml" <<'YAML'
 combos:
-  - {p: [38, 39], k: FN, l: [BASE], a: bottom}
+  - {p: [32, 33], k: FN, l: [BASE], a: bottom}
+  - {p: [21, 22], k: Esc, l: [BASE]}
+  - {p: [13, 14], k: _, l: [BASE]}
+  - {p: [15, 16], k: "-", l: [BASE]}
+  - {p: [17, 18], k: "'", l: [BASE]}
+  - {p: [27, 28], k: '"', l: [BASE]}
 YAML
 
 echo "==> Drawing..."
+# The physical layout comes from the keyboard's own keyboard.json, because
+# keymap-drawer's default lookup goes to official QMK, which has no Cheapino.
+LAYOUT_ARGS=(-j "$KEYBOARD_DIR/keyboard.json" -l LAYOUT_split_3x5_3)
 keymap -c "$HOME/code/qmk_userspace/keymap-drawer.yaml" \
-    draw "$OUT_DIR/keymap.yaml" -o "$OUT_DIR/keymap.svg"
+    draw "$OUT_DIR/keymap.yaml" "${LAYOUT_ARGS[@]}" -o "$OUT_DIR/keymap.svg"
 
 echo "==> Wrote $OUT_DIR/keymap.svg"
 
@@ -66,7 +78,7 @@ WALL_FIT="${WALL_FIT:-94%}"
 
 echo "==> Drawing wallpaper..."
 keymap -c "$HOME/code/qmk_userspace/keymap-drawer-wallpaper.yaml" \
-    draw "$OUT_DIR/keymap.yaml" -o "$OUT_DIR/keymap-wallpaper.svg"
+    draw "$OUT_DIR/keymap.yaml" "${LAYOUT_ARGS[@]}" -o "$OUT_DIR/keymap-wallpaper.svg"
 
 CHROME="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 if [[ ! -x "$CHROME" ]]; then

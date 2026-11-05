@@ -5,3 +5,7 @@ draw_config:
   # rectangles carry their own fill so they survive, but the layer headings
   # sit on no background and would be dark-on-dark in dark mode.
   dark_mode: auto
+
+  # The knob is not a key, so the layout has no place for it. Keep in sync with
+  # keyboards/cheapino/encoder.c.
+  footer_text: "Knob: volume, or scroll while holding NAV. Click: play/pause, or Shift+Cmd+W while holding NUM."
